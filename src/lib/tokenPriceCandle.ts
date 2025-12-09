@@ -87,6 +87,7 @@ export async function getTokenPrice(startDate?: Date, now?: Date): Promise<decim
     const growthRates = [
         { effectiveDate: new Date(Date.UTC(2025, 11, 8, 0, 0, 0)), dailyRise: 3.7 },    // Initial rate on Dec 8, 2025 (UTC)
         { effectiveDate: new Date(Date.UTC(2025, 11, 8, 10, 0, 0)), dailyRise: 0.005 },   // Rate after Dec 9, 2025 (UTC)
+        { effectiveDate: new Date(Date.UTC(2025, 11, 9, 0, 0, 0)), dailyRise: 0.05 },   // Rate after Dec 9, 2025 (UTC)
         // Add more rates as needed with future dates
     ];
     
