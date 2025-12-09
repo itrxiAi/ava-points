@@ -1,0 +1,40 @@
+@import './additional-styles/utility-patterns.css';
+@import './additional-styles/range-slider.css';
+@import './additional-styles/toggle-switch.css';
+@import './additional-styles/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional styles */
+@layer utilities {
+    .rtl {
+        direction: rtl;
+    }
+}
+
+/* 禁用缩放和过度滚动 */
+html,
+body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 禁用所有可交互元素的默认触摸行为 */
+.interactive-area,
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
+}
+
+/* 禁用特定区域的所有触摸行为 */
+.no-touch-action {
+    touch-action: none;
+    -ms-touch-action: none;
+}

@@ -1,0 +1,94 @@
+import { TxFlowStatus, TxFlowType } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import { processOutTx } from "@/tasks/out";
+import { processLockTx } from "@/tasks/lock";
+import { processMiningTx } from "@/tasks/mining";
+import { auditionOutBatch } from "@/lib/balance";
+
+
+/**
+ * handleInOutPointsBatch
+ */
+export async function handleTxSendingBatch() {
+  await auditionOutBatch();
+}
+
+/**
+ * handleInOutPointsBatch
+ */
+export async function handleTxConfirmBatch() {
+
+  // Get the tx_flow record
+  const txs = await prisma.transaction.findMany({
+    where: {
+      type: {
+        in: [TxFlowType.OUT, TxFlowType.LOCK, TxFlowType.ASSEMBLE, TxFlowType.STAKE, TxFlowType.NODE_DIFF_REWARD, TxFlowType.BURNING]
+      },
+      status: TxFlowStatus.PENDING,
+      tx_hash: {
+        not: ''
+      },
+      created_at: {
+        gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+        lte: new Date(Date.now() - 10 * 1000) // Wait 10 seconds to ensure transaction is finalized
+      }
+    },
+    take: 100
+  });
+
+  if (txs.length === 0) {
+    return null;
+  }
+
+  console.log(`Processing ${txs.length} transactions...`);
+  for (const tx of txs) {
+    if (!tx.tx_hash) {
+      continue;
+    }
+
+    await processLockTx(tx);
+    await processOutTx(tx);
+    await processMiningTx(tx);
+
+  }
+}
+
+/**
+ * 
+ * @param txHash 
+ */
+export async function manualTxConfirm(txHash: string) {
+  const tx = await prisma.transaction.findFirst({
+    where: {
+      tx_hash: txHash
+    }
+  });
+
+  if (!tx) {
+    throw new Error('Transaction not found: ' + txHash);
+  }
+
+  await processLockTx(tx);
+  await processOutTx(tx);
+  await processMiningTx(tx);
+
+}
+
+// export interface BalanceCheckResult {
+//   status: 'ok' | 'warning';
+//   messages: string[];
+//   balances: {
+//     usdt: {
+//       current: string;
+//       min: string;
+//       max: string;
+//       isWithinLimits: boolean;
+//     };
+//     token: {
+//       current: string;
+//       min: string;
+//       max: string;
+//       isWithinLimits: boolean;
+//     };
+//   };
+// }

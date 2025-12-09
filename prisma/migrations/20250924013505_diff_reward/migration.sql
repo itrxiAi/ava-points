@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "TxFlowType" ADD VALUE 'NODE_DIFF_REWARD';
