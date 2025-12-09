@@ -201,7 +201,7 @@ export default function MyInvitesPage() {
           // Transform API response to match our invite interface
           const transformedInvites = data.data.map((subordinate: any) => ({
             user: subordinate.address,
-            level: `V${subordinate.level}`,
+            level: `L${subordinate.level}`,
             staking: `${subordinate.balance.token_staked_points} USDT`,
             performance: `${subordinate.balance.performance} USDT`,
             type: subordinate.type ? `${subordinate.type}` : "",
