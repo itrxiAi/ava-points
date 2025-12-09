@@ -1245,14 +1245,14 @@ function StakingContent(): React.ReactElement {
               {/* Duration */}
 
               {/* Daily Yield */}
-              <div className="mb-2">
+              {/* <div className="mb-2">
                 <div className="flex justify-between items-center px-2">
                   <span className="text-gray-400 text-sm">
                     {t("daily_yield")}
                   </span>
                   <span className="text-sm">{stakeData?.ratio * 100}%</span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Balance */}
               <div className="mb-2">
