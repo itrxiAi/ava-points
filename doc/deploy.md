@@ -91,6 +91,40 @@ What would you like to do?
 
 由usdt闪兑token的交易不立即销毁，而是将待销毁的token转入销毁账户，手动提现统一销毁。销毁账户必须在BGC平台注册
 
+## ng config
+``` bash
+server {
+    listen 80;
+    server_name twinx.life www.twinx.life;  # Support both domains
+
+    # Logging configuration
+    access_log /var/log/nginx/twinx.access.log;
+    error_log /var/log/nginx/twinx.error.log;
+
+    # Proxy headers
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache_bypass $http_upgrade;
+
+    # Main location block
+    location / {
+        proxy_pass http://localhost:3000;  # Forward to your Next.js app running on port 3002
+    }
+}
+```
+``` bash
+sudo ln -s /etc/nginx/sites-available/twinx.life /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+```
+
+
 
 
 
