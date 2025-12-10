@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useAppKitAccount } from '@reown/appkit/react';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { generateOperationHash } from '@/utils/auth';
 import { TokenType } from '@prisma/client';
 import { useSignMessage } from 'wagmi';
@@ -113,6 +113,7 @@ const AdminStatisticsPage = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState('');
   const [updateSuccess, setUpdateSuccess] = useState('');
+  const [exportLoading, setExportLoading] = useState(false);
 
   // Performance statistics state
   const [performanceAddress, setPerformanceAddress] = useState('');
@@ -352,33 +353,64 @@ const AdminStatisticsPage = () => {
   };
 
   // Export operation records to Excel
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     if (operationRecords.length === 0) return;
+    
+    setExportLoading(true);
 
-    // Format data for Excel
-    const excelData = operationRecords.map(record => ({
-      ID: record.id,
-      Type: record.type,
-      Address: record.from_address || record.user_address || '',
-      Amount: record.amount,
-      'Token Type': record.token_type,
-      Description: record.description || '',
-      Status: record.status || '',
-      'Created At': format(new Date(record.created_at), 'yyyy-MM-dd HH:mm:ss')
-    }));
-
-    // Create worksheet
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-
-    // Create workbook
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Operation Records');
-
+    // Create workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Operation Records');
+    
+    // Define columns with headers
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 36 },
+      { header: 'Type', key: 'type', width: 15 },
+      { header: 'Address', key: 'address', width: 42 },
+      { header: 'Amount', key: 'amount', width: 15 },
+      { header: 'Token Type', key: 'tokenType', width: 12 },
+      { header: 'Description', key: 'description', width: 25 },
+      { header: 'Status', key: 'status', width: 12 },
+      { header: 'Created At', key: 'createdAt', width: 20 }
+    ];
+    
+    // Add style to header row
+    worksheet.getRow(1).font = { bold: true };
+    
+    // Add data rows
+    operationRecords.forEach(record => {
+      worksheet.addRow({
+        id: record.id,
+        type: record.type,
+        address: record.from_address || record.user_address || '',
+        amount: record.amount,
+        tokenType: record.token_type,
+        description: record.description || '',
+        status: record.status || '',
+        createdAt: format(new Date(record.created_at), 'yyyy-MM-dd HH:mm:ss')
+      });
+    });
+    
     // Generate file name with current date
     const fileName = `operation_records_${selectedType}_${format(new Date(), 'yyyyMMdd_HHmmss')}.xlsx`;
-
-    // Export to file
-    XLSX.writeFile(workbook, fileName);
+    
+    try {
+      // Generate buffer
+      const buffer = await workbook.xlsx.writeBuffer();
+      
+      // Create blob and download
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   // Get the current user's wallet address
@@ -1129,11 +1161,11 @@ const AdminStatisticsPage = () => {
                 {loading ? 'Loading...' : 'Fetch Records'}
               </button>
               <button
-                onClick={exportToExcel}
-                disabled={loading || operationRecords.length === 0}
+                onClick={() => exportToExcel()}
+                disabled={loading || exportLoading || operationRecords.length === 0}
                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
-                Export to Excel
+                {exportLoading ? 'Exporting...' : 'Export to Excel'}
               </button>
             </div>
           </div>

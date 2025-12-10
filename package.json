@@ -31,6 +31,7 @@
     "chartjs-adapter-moment": "^1.0.1",
     "cors": "^2.8.5",
     "decimal.js": "^10.5.0",
+    "exceljs": "^4.4.0",
     "express": "^5.1.0",
     "html2canvas": "^1.4.1",
     "jose": "^6.0.10",
@@ -51,8 +52,7 @@
     "tweetnacl": "^1.0.3",
     "viem": "^2.33.3",
     "wagmi": "^2.16.1",
-    "webpack": "^5.98.0",
-    "xlsx": "^0.18.5"
+    "webpack": "^5.98.0"
   },
   "overrides": {
     "glob": "^10.4.6",
