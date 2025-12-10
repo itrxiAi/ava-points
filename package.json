@@ -25,7 +25,7 @@
     "@types/express": "^5.0.1",
     "antd": "^5.24.5",
     "aos": "^3.0.0-beta.6",
-    "axios": "^1.11.0",
+    "axios": "^1.13.2",
     "bn.js": "^5.2.2",
     "bs58": "^5.0.0",
     "chartjs-adapter-moment": "^1.0.1",
