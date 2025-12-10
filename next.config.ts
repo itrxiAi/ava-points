@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
   security: {
     dangerouslyAllowHTML: true,
   },
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      'porto': false,
+      '@base-org/account': false,
+      '@metamask/sdk': false
+    };
+    return config;
+  }
 };
 
 const withNextIntl = createNextIntlPlugin();

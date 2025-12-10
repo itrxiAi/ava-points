@@ -198,11 +198,30 @@ function StakingContent(): React.ReactElement {
       try {
         console.log("Fetching token balance for address:", address);
 
-        // Use getBalance to fetch the token balance
-        const balanceResult = await getBalance(config, {
-          address: address as `0x${string}`,
-          token: "0xf43C9b40C9361b301019C98Fb535affB3ec6C673" as `0x${string}`,
+        // For ERC20 tokens in wagmi v3, we need to use readContract instead of getBalance
+        const tokenAddress = "0xf43C9b40C9361b301019C98Fb535affB3ec6C673" as `0x${string}`;
+        const { readContract } = await import("@wagmi/core");
+        
+        // First get the token decimals
+        const decimals = await readContract(config, {
+          address: tokenAddress,
+          abi: [{ type: "function", name: "decimals", inputs: [], outputs: [{ type: "uint8" }], stateMutability: "view" }],
+          functionName: "decimals",
         });
+        
+        // Then get the balance
+        const balanceValue = await readContract(config, {
+          address: tokenAddress,
+          abi: [{ type: "function", name: "balanceOf", inputs: [{ type: "address" }], outputs: [{ type: "uint256" }], stateMutability: "view" }],
+          functionName: "balanceOf",
+          args: [address as `0x${string}`],
+        });
+        
+        // Create a similar structure to what getBalance would return
+        const balanceResult = {
+          value: balanceValue,
+          decimals: Number(decimals)
+        };
 
         console.log("Token balance result:", balanceResult);
         // Convert bigint to string first, then to Decimal for proper division
