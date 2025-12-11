@@ -11,7 +11,7 @@ import { TokenType, TxFlowStatus, TxFlowType } from '@prisma/client';
 export async function POST(req: NextRequest) {
   const { count } = await req.json();
   try {
-    await testBatchDepositUsers(count);
+    //await testBatchDepositUsers(count);
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error) {

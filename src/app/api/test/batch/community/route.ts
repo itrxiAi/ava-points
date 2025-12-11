@@ -13,7 +13,7 @@ import { getCommunityNum, getGroupNum } from '@/lib/config';
 export async function POST(req: NextRequest) {
   const { count } = await req.json();
   try {
-    await testBatchCreateUsers(count);
+    //await testBatchCreateUsers(count);
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error) {
