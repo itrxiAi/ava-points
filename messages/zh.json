@@ -106,7 +106,7 @@
     "NODE_DIFF_REWARD": "节点级差收益",
     "FEE_DIVIDEND": "手续费分红",
     "FEE_DIVIDEND_TOKEN": "手续费分红（TXT）",
-    "STAKE_STATIC_REWARD": "销毁挖矿收益",
+    "STAKE_STATIC_REWARD": "挖矿收益",
     "STAKE_STATIC_DIRECT_REWARD": "直推奖励",
     "STAKE_DYNAMIC_REWARD": "社区挖矿收益",
     "STAKE_DYNAMIC_INCUBATION_REWARD": "平级收益",
