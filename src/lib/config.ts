@@ -563,7 +563,7 @@ export async function getBalanceCheckCron(): Promise<string> {
  */
 export async function getSettlementCron(): Promise<string> {
     const cron = await getConfig(SETTLEMENT_CRON);
-    return cron || '0 0 1 * * *';
+    return cron || '59 57 0 * * *';
 }
 
 /**
